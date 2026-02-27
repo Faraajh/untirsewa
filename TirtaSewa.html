@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TirtaSewa — Sewa Barang Antar Mahasiswa</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0a4f6e;
+    --accent: #00c2a8;
+    --accent2: #f4a234;
+    --bg: #f5f2ec;
+    --bg2: #eae6de;
+    --text: #1a1a2e;
+    --text-light: #6b7280;
+    --white: #ffffff;
+    --card-shadow: 0 4px 24px rgba(10,79,110,0.10);
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAVBAR */
+  nav {
+    background: var(--primary);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(10,79,110,0.18);
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--white);
+    letter-spacing: 0.5px;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+  .btn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+  }
+  .btn-outline:hover { background: var(--accent); color: var(--primary); }
+  .btn-accent {
+    background: var(--accent);
+    color: var(--primary);
+  }
+  .btn-accent:hover { background: #00a892; }
+  .btn-primary {
+    background: var(--primary);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: #083d57; }
+  .btn-yellow {
+    background: var(--accent2);
+    color: var(--white);
+  }
+  .btn-yellow:hover { background: #e09020; }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 60%, #0e7a9a 100%);
+    padding: 60px 24px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(0,194,168,0.10);
+    top: -100px; right: -100px;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: rgba(244,162,52,0.08);
+    bottom: -80px; left: -60px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--white);
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 em { color: var(--accent); font-style: italic; }
+  .hero p {
+    color: rgba(255,255,255,0.75);
+    font-size: 1rem;
+    max-width: 480px;
+    margin: 0 auto 28px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+
+  /* SEARCH BAR */
+  .search-section {
+    background: var(--bg2);
+    padding: 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid #ddd8cf;
+  }
+  .search-section input, .search-section select {
+    padding: 10px 16px;
+    border-radius: 50px;
+    border: 2px solid #ddd8cf;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.9rem;
+    background: var(--white);
+    outline: none;
+    transition: border 0.2s;
+  }
+  .search-section input:focus, .search-section select:focus { border-color: var(--accent); }
+  .search-section input { flex: 1; min-width: 200px; }
+
+  /* GRID */
+  .section { padding: 32px 24px; }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(10,79,110,0.15); }
+  .card-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: var(--bg2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+  .card-body { padding: 16px; }
+  .card-title { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+  .card-meta { font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px; }
+  .card-price { font-weight: 700; color: var(--primary); font-size: 1rem; }
+  .card-price span { font-weight: 400; color: var(--text-light); font-size: 0.8rem; }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .badge-available { background: #d1fae5; color: #065f46; }
+  .badge-rented { background: #fee2e2; color: #991b1b; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,30,60,0.55);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: 100%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(10,79,110,0.25);
+    animation: modalIn 0.25s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+  .modal h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 2px solid #ddd8cf;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border 0.2s;
+    background: var(--bg);
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); background: var(--white); }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-actions .btn { flex: 1; padding: 12px; }
+  .btn-cancel { background: var(--bg2); color: var(--text); }
+  .btn-cancel:hover { background: #ddd8cf; }
+
+  /* DETAIL PAGE */
+  .detail-hero {
+    background: var(--primary);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .detail-emoji { font-size: 4rem; background: var(--bg2); width: 100px; height: 100px; border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .detail-hero-info h2 { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--white); }
+  .detail-hero-info p { color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 4px; }
+  .detail-body { padding: 24px; }
+  .detail-price-box {
+    background: linear-gradient(135deg, var(--accent) 0%, #00a89a 100%);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--primary);
+  }
+  .detail-price-box .price { font-size: 2rem; font-weight: 700; }
+  .detail-price-box .price-label { font-size: 0.85rem; opacity: 0.8; }
+  .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--bg2); font-size: 0.9rem; }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .label { color: var(--text-light); }
+  .info-row .value { font-weight: 600; }
+
+  /* PROFILE */
+  .profile-header {
+    background: linear-gradient(135deg, var(--primary), #0e7a9a);
+    padding: 40px 24px 30px;
+    text-align: center;
+    color: var(--white);
+  }
+  .avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 12px;
+    border: 3px solid rgba(255,255,255,0.3);
+  }
+  .profile-name { font-family: 'DM Serif Display', serif; font-size: 1.5rem; }
+  .profile-jurusan { opacity: 0.75; font-size: 0.9rem; margin-top: 4px; }
+
+  /* HISTORY */
+  .history-item {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--card-shadow);
+  }
+  .history-emoji { font-size: 2rem; flex-shrink: 0; }
+  .history-info { flex: 1; }
+  .history-name { font-weight: 600; font-size: 0.95rem; }
+  .history-date { font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+  .history-status { font-size: 0.8rem; font-weight: 600; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--text-light); }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.95rem; }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--white);
+    border-top: 1px solid #ddd8cf;
+    display: flex;
+    z-index: 99;
+    box-shadow: 0 -4px 16px rgba(10,79,110,0.08);
+  }
+  .nav-item {
+    flex: 1;
+    padding: 12px 8px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: color 0.2s;
+    color: var(--text-light);
+    font-size: 0.7rem;
+    font-weight: 600;
+    border: none;
+    background: none;
+    font-family: 'Sora', sans-serif;
+  }
+  .nav-item .nav-icon { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+  .nav-item.active { color: var(--primary); }
+  .nav-item.active .nav-icon { transform: scale(1.1); }
+
+  body { padding-bottom: 70px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 80px; left: 50%; transform: translateX(-50%);
+    background: var(--primary);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">Tirta<span>Sewa</span></div>
+  <div class="nav-actions">
+    <button class="btn btn-outline" onclick="showModal('modalPosting')">+ Posting</button>
+  </div>
+</nav>
+
+<!-- PAGES -->
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <h1>Sewa & Pinjam<br><em>Antar Mahasiswa</em></h1>
+    <p>Platform berbagi barang sesama mahasiswa kampus. Hemat biaya, bantu sesama!</p>
+    <div class="hero-btns">
+      <button class="btn btn-accent" onclick="showModal('modalPosting')">📦 Posting Barang</button>
+      <button class="btn btn-outline" onclick="scrollToListings()">🔍 Cari Barang</button>
+    </div>
+  </div>
+
+  <div class="search-section" id="search-section">
+    <input type="text" id="searchInput" placeholder="🔍 Cari barang..." oninput="renderListings()">
+    <select id="filterKategori" onchange="renderListings()">
+      <option value="">Semua Kategori</option>
+      <option value="Elektronik">Elektronik</option>
+      <option value="Fotografi">Fotografi</option>
+      <option value="Olahraga">Olahraga</option>
+      <option value="Buku & Alat Tulis">Buku & Alat Tulis</option>
+      <option value="Dapur">Dapur</option>
+      <option value="Lainnya">Lainnya</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 Listing Barang</div>
+    <div class="grid" id="listings-grid"></div>
+    <div class="empty-state" id="listings-empty" style="display:none;">
+      <div class="icon">📭</div>
+      <p>Belum ada barang yang diposting.<br>Jadilah yang pertama!</p>
+    </div>
+  </div>
+</div>
+
+<!-- RIWAYAT -->
+<div id="page-riwayat" class="page">
+  <div class="section">
+    <div class="section-title">📜 Riwayat Transaksi</div>
+    <div id="riwayat-list"></div>
+    <div class="empty-state" id="riwayat-empty" style="display:none;">
+      <div class="icon">📭</div>
+      <p>Belum ada riwayat transaksi.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PROFIL -->
+<div id="page-profil" class="page">
+  <div class="profile-header">
+    <div class="avatar" id="profile-avatar">👤</div>
+    <div class="profile-name" id="profile-name-display">—</div>
+    <div class="profile-jurusan" id="profile-jurusan-display">—</div>
+  </div>
+  <div class="section">
+    <div class="section-title">📦 Barang Saya</div>
+    <div class="grid" id="my-listings-grid"></div>
+    <div class="empty-state" id="my-listings-empty" style="display:none;">
+      <div class="icon">📭</div>
+      <p>Kamu belum posting barang apapun.</p>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL PAGE -->
+<div id="page-detail" class="page">
+  <div class="detail-hero" id="detail-hero">
+    <div class="detail-emoji" id="detail-emoji">📦</div>
+    <div class="detail-hero-info">
+      <h2 id="detail-nama"></h2>
+      <p id="detail-pemilik"></p>
+    </div>
+  </div>
+  <div class="detail-body">
+    <div class="detail-price-box">
+      <div class="price-label">Harga Sewa</div>
+      <div class="price" id="detail-harga"></div>
+      <div class="price-label">per hari</div>
+    </div>
+    <div id="detail-badge-wrap" style="margin-bottom:16px;"></div>
+    <div class="info-row"><span class="label">Kategori</span><span class="value" id="detail-kategori"></span></div>
+    <div class="info-row"><span class="label">Deskripsi</span><span class="value" id="detail-deskripsi"></span></div>
+    <div class="info-row"><span class="label">Pemilik</span><span class="value" id="detail-pemilik2"></span></div>
+    <div class="info-row"><span class="label">Jurusan</span><span class="value" id="detail-jurusan"></span></div>
+    <div id="booking-section" style="margin-top:24px;">
+      <div class="form-group">
+        <label>Tanggal Mulai Pinjam</label>
+        <input type="date" id="tgl-mulai">
+      </div>
+      <div class="form-group">
+        <label>Tanggal Kembali</label>
+        <input type="date" id="tgl-kembali">
+      </div>
+      <div id="estimasi-harga" style="font-weight:700; color:var(--primary); margin-bottom:12px; font-size:1rem;"></div>
+      <button class="btn btn-accent" style="width:100%; padding:14px;" onclick="submitBooking()">✅ Konfirmasi Pinjam</button>
+    </div>
+    <button class="btn btn-cancel" style="width:100%; padding:12px; margin-top:12px;" onclick="goBack()">← Kembali</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-item active" onclick="showPage('home')" id="nav-home">
+    <span class="nav-icon">🏠</span> Beranda
+  </button>
+  <button class="nav-item" onclick="showPage('riwayat')" id="nav-riwayat">
+    <span class="nav-icon">📜</span> Riwayat
+  </button>
+  <button class="nav-item" onclick="showPage('profil')" id="nav-profil">
+    <span class="nav-icon">👤</span> Profil
+  </button>
+</div>
+
+<!-- MODAL: ONBOARDING -->
+<div class="modal-overlay open" id="modalOnboarding">
+  <div class="modal">
+    <h2>👋 Selamat Datang di TirtaSewa!</h2>
+    <p style="color:var(--text-light); font-size:0.9rem; margin-bottom:20px;">Platform sewa & pinjam barang antar mahasiswa. Masukkan data kamu dulu ya!</p>
+    <div class="form-group">
+      <label>Nama Lengkap</label>
+      <input type="text" id="input-nama" placeholder="Contoh: Budi Santoso">
+    </div>
+    <div class="form-group">
+      <label>Jurusan</label>
+      <input type="text" id="input-jurusan" placeholder="Contoh: Ilmu Komunikasi">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-accent" style="flex:1; padding:12px;" onclick="saveProfile()">Mulai Pakai TirtaSewa 🚀</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: POSTING BARANG -->
+<div class="modal-overlay" id="modalPosting">
+  <div class="modal">
+    <h2>📦 Posting Barang</h2>
+    <div class="form-group">
+      <label>Nama Barang</label>
+      <input type="text" id="post-nama" placeholder="Contoh: Tripod Kamera Profesional">
+    </div>
+    <div class="form-group">
+      <label>Kategori</label>
+      <select id="post-kategori">
+        <option value="Fotografi">Fotografi</option>
+        <option value="Elektronik">Elektronik</option>
+        <option value="Olahraga">Olahraga</option>
+        <option value="Buku & Alat Tulis">Buku & Alat Tulis</option>
+        <option value="Dapur">Dapur</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Deskripsi Barang</label>
+      <textarea id="post-deskripsi" placeholder="Kondisi barang, spesifikasi, syarat pinjam, dll..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Harga Sewa (Rp/hari)</label>
+      <input type="number" id="post-harga" placeholder="Contoh: 15000">
+    </div>
+    <div class="form-group">
+      <label>Emoji / Ikon Barang</label>
+      <select id="post-emoji">
+        <option value="📷">📷 Kamera</option>
+        <option value="🎥">🎥 Video Kamera</option>
+        <option value="📱">📱 Smartphone</option>
+        <option value="💻">💻 Laptop</option>
+        <option value="🎙️">🎙️ Mikrofon</option>
+        <option value="🎧">🎧 Headphone</option>
+        <option value="⚽">⚽ Olahraga</option>
+        <option value="📚">📚 Buku</option>
+        <option value="🧳">🧳 Koper</option>
+        <option value="🏕️">🏕️ Perlengkapan Outdoor</option>
+        <option value="🍳">🍳 Peralatan Masak</option>
+        <option value="📦">📦 Lainnya</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('modalPosting')">Batal</button>
+      <button class="btn btn-accent" onclick="postBarang()">Posting Sekarang</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // DATA
+  let user = null;
+  let listings = [];
+  let riwayat = [];
+  let currentDetailId = null;
+  let previousPage = 'home';
+
+  const EMOJI_MAP = {
+    'Fotografi': '📷',
+    'Elektronik': '💻',
+    'Olahraga': '⚽',
+    'Buku & Alat Tulis': '📚',
+    'Dapur': '🍳',
+    'Lainnya': '📦'
+  };
+
+  // LOAD FROM LOCALSTORAGE
+  function loadData() {
+    user = JSON.parse(localStorage.getItem('ts_user') || 'null');
+    listings = JSON.parse(localStorage.getItem('ts_listings') || '[]');
+    riwayat = JSON.parse(localStorage.getItem('ts_riwayat') || '[]');
+  }
+
+  function saveData() {
+    localStorage.setItem('ts_user', JSON.stringify(user));
+    localStorage.setItem('ts_listings', JSON.stringify(listings));
+    localStorage.setItem('ts_riwayat', JSON.stringify(riwayat));
+  }
+
+  // INIT
+  loadData();
+  if (user) {
+    document.getElementById('modalOnboarding').classList.remove('open');
+    renderAll();
+  }
+
+  // SEED DATA (if empty)
+  if (listings.length === 0) {
+    listings = [
+      { id: 1, nama: 'Tripod Kamera Aluminum', kategori: 'Fotografi', emoji: '📷', deskripsi: 'Tripod kamera kokoh, tinggi bisa diatur hingga 160cm. Cocok untuk foto & video. Kondisi sangat baik.', harga: 15000, pemilik: 'Andi Pratama', jurusan: 'Desain Komunikasi Visual', status: 'available' },
+      { id: 2, nama: 'Mikrofon Condenser', kategori: 'Elektronik', emoji: '🎙️', deskripsi: 'Mic condenser untuk recording vokal, podcast, dan presentasi. Sudah termasuk kabel XLR.', harga: 25000, pemilik: 'Sari Wulandari', jurusan: 'Broadcast', status: 'available' },
+      { id: 3, nama: 'Koper Kabin 20"', kategori: 'Lainnya', emoji: '🧳', deskripsi: 'Koper kabin ukuran 20 inch, cocok untuk perjalanan singkat. Ada TSA lock.', harga: 30000, pemilik: 'Budi Santoso', jurusan: 'Manajemen', status: 'rented' },
+      { id: 4, nama: 'Laptop ASUS VivoBook', kategori: 'Elektronik', emoji: '💻', deskripsi: 'Laptop i5 gen 11, RAM 8GB, SSD 256GB. Cocok untuk coding, desain ringan, presentasi.', harga: 75000, pemilik: 'Rizky Firmansyah', jurusan: 'Teknik Informatika', status: 'available' },
+      { id: 5, nama: 'Bola Futsal', kategori: 'Olahraga', emoji: '⚽', deskripsi: 'Bola futsal ukuran 4, kondisi bagus. Bisa pinjam untuk main di GOR kampus.', harga: 5000, pemilik: 'Dimas Aditya', jurusan: 'PJKR', status: 'available' },
+    ];
+    saveData();
+  }
+
+  function saveProfile() {
+    const nama = document.getElementById('input-nama').value.trim();
+    const jurusan = document.getElementById('input-jurusan').value.trim();
+    if (!nama || !jurusan) { showToast('Nama dan jurusan wajib diisi!'); return; }
+    user = { nama, jurusan };
+    saveData();
+    document.getElementById('modalOnboarding').classList.remove('open');
+    renderAll();
+    showToast('Selamat datang, ' + nama + '! 🎉');
+  }
+
+  function renderAll() {
+    renderListings();
+    renderProfile();
+    renderRiwayat();
+  }
+
+  function renderListings() {
+    const query = (document.getElementById('searchInput')?.value || '').toLowerCase();
+    const kat = document.getElementById('filterKategori')?.value || '';
+    const filtered = listings.filter(l => {
+      const matchQ = l.nama.toLowerCase().includes(query) || l.deskripsi.toLowerCase().includes(query);
+      const matchK = kat === '' || l.kategori === kat;
+      return matchQ && matchK;
+    });
+
+    const grid = document.getElementById('listings-grid');
+    const empty = document.getElementById('listings-empty');
+    grid.innerHTML = '';
+    if (filtered.length === 0) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    filtered.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.onclick = () => showDetail(item.id);
+      div.innerHTML = `
+        <div class="card-img">${item.emoji}</div>
+        <div class="card-body">
+          <div class="badge ${item.status === 'available' ? 'badge-available' : 'badge-rented'}">${item.status === 'available' ? '✅ Tersedia' : '🔒 Sedang Dipinjam'}</div>
+          <div class="card-title">${item.nama}</div>
+          <div class="card-meta">${item.kategori} · ${item.pemilik}</div>
+          <div class="card-price">Rp ${item.harga.toLocaleString('id-ID')} <span>/hari</span></div>
+        </div>`;
+      grid.appendChild(div);
+    });
+  }
+
+  function renderProfile() {
+    if (!user) return;
+    document.getElementById('profile-name-display').textContent = user.nama;
+    document.getElementById('profile-jurusan-display').textContent = user.jurusan;
+    document.getElementById('profile-avatar').textContent = user.nama[0].toUpperCase();
+
+    const myListings = listings.filter(l => l.pemilik === user.nama);
+    const grid = document.getElementById('my-listings-grid');
+    const empty = document.getElementById('my-listings-empty');
+    grid.innerHTML = '';
+    if (myListings.length === 0) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    myListings.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.onclick = () => showDetail(item.id);
+      div.innerHTML = `
+        <div class="card-img">${item.emoji}</div>
+        <div class="card-body">
+          <div class="badge ${item.status === 'available' ? 'badge-available' : 'badge-rented'}">${item.status === 'available' ? '✅ Tersedia' : '🔒 Dipinjam'}</div>
+          <div class="card-title">${item.nama}</div>
+          <div class="card-price">Rp ${item.harga.toLocaleString('id-ID')} <span>/hari</span></div>
+        </div>`;
+      grid.appendChild(div);
+    });
+  }
+
+  function renderRiwayat() {
+    const list = document.getElementById('riwayat-list');
+    const empty = document.getElementById('riwayat-empty');
+    list.innerHTML = '';
+    if (riwayat.length === 0) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    [...riwayat].reverse().forEach(r => {
+      const div = document.createElement('div');
+      div.className = 'history-item';
+      div.innerHTML = `
+        <div class="history-emoji">${r.emoji}</div>
+        <div class="history-info">
+          <div class="history-name">${r.nama}</div>
+          <div class="history-date">${r.tglMulai} → ${r.tglKembali}</div>
+          <div class="history-status" style="color:var(--accent);">Total: Rp ${r.total.toLocaleString('id-ID')}</div>
+        </div>
+        <div class="badge badge-available">Selesai</div>`;
+      list.appendChild(div);
+    });
+  }
+
+  function showDetail(id) {
+    const item = listings.find(l => l.id === id);
+    if (!item) return;
+    currentDetailId = id;
+    previousPage = document.querySelector('.page.active').id.replace('page-', '');
+
+    document.getElementById('detail-emoji').textContent = item.emoji;
+    document.getElementById('detail-nama').textContent = item.nama;
+    document.getElementById('detail-pemilik').textContent = 'Oleh: ' + item.pemilik;
+    document.getElementById('detail-harga').textContent = 'Rp ' + item.harga.toLocaleString('id-ID');
+    document.getElementById('detail-kategori').textContent = item.kategori;
+    document.getElementById('detail-deskripsi').textContent = item.deskripsi;
+    document.getElementById('detail-pemilik2').textContent = item.pemilik;
+    document.getElementById('detail-jurusan').textContent = item.jurusan;
+    document.getElementById('detail-badge-wrap').innerHTML = `<span class="badge ${item.status === 'available' ? 'badge-available' : 'badge-rented'}">${item.status === 'available' ? '✅ Tersedia' : '🔒 Sedang Dipinjam'}</span>`;
+
+    const bookingSection = document.getElementById('booking-section');
+    bookingSection.style.display = item.status === 'available' ? 'block' : 'none';
+
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('tgl-mulai').min = today;
+    document.getElementById('tgl-kembali').min = today;
+    document.getElementById('tgl-mulai').value = '';
+    document.getElementById('tgl-kembali').value = '';
+    document.getElementById('estimasi-harga').textContent = '';
+
+    // Listen for date change
+    document.getElementById('tgl-mulai').oninput = updateEstimasi;
+    document.getElementById('tgl-kembali').oninput = updateEstimasi;
+
+    showPage('detail', true);
+  }
+
+  function updateEstimasi() {
+    const item = listings.find(l => l.id === currentDetailId);
+    const mulai = document.getElementById('tgl-mulai').value;
+    const kembali = document.getElementById('tgl-kembali').value;
+    if (mulai && kembali && kembali > mulai) {
+      const days = Math.ceil((new Date(kembali) - new Date(mulai)) / 86400000);
+      const total = days * item.harga;
+      document.getElementById('estimasi-harga').textContent = `Estimasi: ${days} hari × Rp ${item.harga.toLocaleString('id-ID')} = Rp ${total.toLocaleString('id-ID')}`;
+    } else {
+      document.getElementById('estimasi-harga').textContent = '';
+    }
+  }
+
+  function submitBooking() {
+    if (!user) { showToast('Login dulu!'); return; }
+    const item = listings.find(l => l.id === currentDetailId);
+    const mulai = document.getElementById('tgl-mulai').value;
+    const kembali = document.getElementById('tgl-kembali').value;
+    if (!mulai || !kembali) { showToast('Pilih tanggal dulu!'); return; }
+    if (kembali <= mulai) { showToast('Tanggal kembali harus setelah tanggal mulai!'); return; }
+
+    const days = Math.ceil((new Date(kembali) - new Date(mulai)) / 86400000);
+    const total = days * item.harga;
+
+    // Update status
+    listings = listings.map(l => l.id === currentDetailId ? {...l, status: 'rented'} : l);
+
+    // Add to riwayat
+    riwayat.push({ nama: item.nama, emoji: item.emoji, tglMulai: mulai, tglKembali: kembali, total });
+    saveData();
+    showToast('✅ Berhasil! Selamat menikmati ' + item.nama);
+    setTimeout(() => showPage('home'), 1000);
+    renderAll();
+  }
+
+  function postBarang() {
+    if (!user) return;
+    const nama = document.getElementById('post-nama').value.trim();
+    const kategori = document.getElementById('post-kategori').value;
+    const deskripsi = document.getElementById('post-deskripsi').value.trim();
+    const harga = parseInt(document.getElementById('post-harga').value);
+    const emoji = document.getElementById('post-emoji').value;
+    if (!nama || !deskripsi || !harga) { showToast('Lengkapi semua field!'); return; }
+
+    const newItem = {
+      id: Date.now(),
+      nama, kategori, deskripsi, harga, emoji,
+      pemilik: user.nama,
+      jurusan: user.jurusan,
+      status: 'available'
+    };
+    listings.push(newItem);
+    saveData();
+    closeModal('modalPosting');
+    renderListings();
+    renderProfile();
+    showToast('📦 Barang berhasil diposting!');
+
+    // Reset form
+    document.getElementById('post-nama').value = '';
+    document.getElementById('post-deskripsi').value = '';
+    document.getElementById('post-harga').value = '';
+  }
+
+  function showPage(name, skipNav = false) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    if (!skipNav) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const navEl = document.getElementById('nav-' + name);
+      if (navEl) navEl.classList.add('active');
+    }
+    window.scrollTo(0, 0);
+    if (name === 'riwayat') renderRiwayat();
+    if (name === 'profil') renderProfile();
+  }
+
+  function goBack() { showPage(previousPage); }
+
+  function showModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  // Close modal on outside click
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay && overlay.id !== 'modalOnboarding') closeModal(overlay.id);
+    });
+  });
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  function scrollToListings() {
+    document.getElementById('search-section').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
