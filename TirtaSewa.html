@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TirtaSewa — Sewa Barang Antar Mahasiswa</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a4f6e">
+<link rel="apple-touch-icon" href="/icon-192.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -846,6 +850,15 @@
 
   function scrollToListings() {
     document.getElementById('search-section').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Register service worker untuk PWA (offline cache + installable)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.warn('Service worker gagal register:', err);
+      });
+    });
   }
 </script>
 </body>
